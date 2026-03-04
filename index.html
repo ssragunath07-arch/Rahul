@@ -1,0 +1,48 @@
+import React, { useState } from "react"; import { Heart, MessageCircle, Send, Bookmark } from "lucide-react"; import { Card, CardContent } from "@/components/ui/card"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input";
+
+export default function InstagramClone() { const [posts, setPosts] = useState([ { id: 1, username: "ragul_dev", image: "https://source.unsplash.com/600x600/?nature", likes: 120, caption: "Beautiful nature 🌿", liked: false, }, { id: 2, username: "machii_codes", image: "https://source.unsplash.com/600x600/?city", likes: 89, caption: "City vibes ✨", liked: false, }, ]);
+
+const [newPost, setNewPost] = useState("");
+
+const toggleLike = (id) => { setPosts( posts.map((post) => post.id === id ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1, } : post ) ); };
+
+const addPost = () => { if (!newPost) return; const post = { id: Date.now(), username: "ragul_dev", image: newPost, likes: 0, caption: "New Post 🚀", liked: false, }; setPosts([post, ...posts]); setNewPost(""); };
+
+return ( <div className="min-h-screen bg-gray-100 p-4"> <div className="max-w-md mx-auto space-y-6"> <h1 className="text-3xl font-bold text-center">Instagram Clone</h1>
+
+<Card className="rounded-2xl shadow-lg p-4">
+      <CardContent className="space-y-3">
+        <Input
+          placeholder="Paste image URL..."
+          value={newPost}
+          onChange={(e) => setNewPost(e.target.value)}
+        />
+        <Button className="w-full rounded-2xl" onClick={addPost}>
+          Add Post
+        </Button>
+      </CardContent>
+    </Card>
+
+    {posts.map((post) => (
+      <Card key={post.id} className="rounded-2xl shadow-xl overflow-hidden">
+        <CardContent className="p-0">
+          <div className="flex items-center justify-between p-3 font-semibold">
+            {post.username}
+            <Bookmark size={20} />
+          </div>
+          <img
+            src={post.image}
+            alt="post"
+            className="w-full h-80 object-cover"
+          />
+          <div className="p-3 space-y-2">
+            <div className="flex items-center gap-4">
+              <Heart
+                size={24}
+                onClick={() => toggleLike(post.id)}
+                className={`cursor-pointer ${
+                  post.liked ? "text-red-500" : ""
+                }`}
+              />
+              <MessageCircle size={24} className="
+                
