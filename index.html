@@ -3,214 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Car Racing Game</title>
+<title>GameZone - Play Free Games</title>
 
 <style>
-body{
+*{
   margin:0;
-  overflow:hidden;
-  background:#222;
+  padding:0;
+  box-sizing:border-box;
   font-family:Arial, sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#141e30,#243b55);
   color:white;
+}
+
+header{
+  background:#111;
+  padding:20px;
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:2px;
+}
+
+nav{
+  background:#1c1c1c;
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  padding:15px;
+}
+
+nav a{
+  color:white;
+  text-decoration:none;
+  transition:0.3s;
+}
+
+nav a:hover{
+  color:#00ffcc;
+}
+
+.container{
+  padding:40px 10%;
+}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:#1f1f1f;
+  border-radius:15px;
+  overflow:hidden;
+  transition:0.4s;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+}
+
+.card-content{
+  padding:20px;
   text-align:center;
 }
 
-h1{
-  margin:10px;
-}
-
-#score{
-  font-size:20px;
-}
-
-.gameArea{
-  position:relative;
-  width:400px;
-  height:600px;
-  margin:20px auto;
-  background:#555;
-  overflow:hidden;
-  border-left:6px solid white;
-  border-right:6px solid white;
-}
-
-.roadLine{
-  position:absolute;
-  width:10px;
-  height:100px;
-  background:white;
-  left:195px;
-}
-
-.car, .enemy{
-  position:absolute;
-  width:50px;
-  height:90px;
-  border-radius:10px;
-}
-
-.car{
-  background:#00ffcc;
-  bottom:20px;
-  left:175px;
-}
-
-.enemy{
-  background:#ff4d4d;
-}
-  
-#gameOver{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  display:none;
+.card-content h3{
+  margin-bottom:10px;
 }
 
 button{
   padding:10px 20px;
   border:none;
-  border-radius:5px;
+  border-radius:20px;
   background:#00ffcc;
   font-weight:bold;
   cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#00ccaa;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  background:#111;
+  margin-top:40px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🚗 Car Racing Game</h1>
-<div id="score">Score: 0</div>
+<header>🎮 GameZone</header>
 
-<div class="gameArea" id="gameArea">
-  <div id="gameOver">
-    <h2>Game Over</h2>
-    <button onclick="startGame()">Restart</button>
+<nav>
+  <a href="#">Home</a>
+  <a href="#">Action</a>
+  <a href="#">Racing</a>
+  <a href="#">Puzzle</a>
+</nav>
+
+<div class="container">
+  <div class="games">
+
+    <div class="card">
+      <img src="https://picsum.photos/400/300?random=1">
+      <div class="card-content">
+        <h3>Car Racing</h3>
+        <button onclick="playGame('Car Racing')">Play Now</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://picsum.photos/400/300?random=2">
+      <div class="card-content">
+        <h3>Space Shooter</h3>
+        <button onclick="playGame('Space Shooter')">Play Now</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://picsum.photos/400/300?random=3">
+      <div class="card-content">
+        <h3>Snake Game</h3>
+        <button onclick="playGame('Snake Game')">Play Now</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
+<footer>
+  © 2026 GameZone | All Rights Reserved
+</footer>
+
 <script>
-const gameArea = document.getElementById("gameArea");
-const scoreDisplay = document.getElementById("score");
-const gameOver = document.getElementById("gameOver");
-
-let player = { speed:5, score:0 };
-let keys = { ArrowLeft:false, ArrowRight:false };
-let gameRunning = false;
-
-document.addEventListener("keydown", e=>{
-  if(keys.hasOwnProperty(e.key)) keys[e.key] = true;
-});
-
-document.addEventListener("keyup", e=>{
-  if(keys.hasOwnProperty(e.key)) keys[e.key] = false;
-});
-
-function startGame(){
-  gameArea.innerHTML = "";
-  gameArea.appendChild(gameOver);
-  gameOver.style.display = "none";
-
-  player.speed = 5;
-  player.score = 0;
-  gameRunning = true;
-
-  // Road lines
-  for(let x=0; x<5; x++){
-    let line = document.createElement("div");
-    line.classList.add("roadLine");
-    line.y = x * 150;
-    line.style.top = line.y + "px";
-    gameArea.appendChild(line);
-  }
-
-  // Player car
-  let car = document.createElement("div");
-  car.setAttribute("class","car");
-  gameArea.appendChild(car);
-  player.x = car.offsetLeft;
-  player.y = car.offsetTop;
-
-  // Enemies
-  for(let x=0; x<3; x++){
-    let enemy = document.createElement("div");
-    enemy.setAttribute("class","enemy");
-    enemy.y = (x+1) * -300;
-    enemy.style.top = enemy.y + "px";
-    enemy.style.left = Math.floor(Math.random()*350) + "px";
-    gameArea.appendChild(enemy);
-  }
-
-  window.requestAnimationFrame(playGame);
-}
-
-function moveLines(){
-  let lines = document.querySelectorAll(".roadLine");
-  lines.forEach(line=>{
-    if(line.y >= 600){
-      line.y -= 750;
-    }
-    line.y += player.speed;
-    line.style.top = line.y + "px";
-  });
-}
-
-function moveEnemies(car){
-  let enemies = document.querySelectorAll(".enemy");
-  enemies.forEach(enemy=>{
-    if(isCollide(car, enemy)){
-      endGame();
-    }
-    if(enemy.y >= 600){
-      enemy.y = -300;
-      enemy.style.left = Math.floor(Math.random()*350) + "px";
-    }
-    enemy.y += player.speed;
-    enemy.style.top = enemy.y + "px";
-  });
-}
-
-function isCollide(a,b){
-  let aRect = a.getBoundingClientRect();
-  let bRect = b.getBoundingClientRect();
-  return !(
-    aRect.bottom < bRect.top ||
-    aRect.top > bRect.bottom ||
-    aRect.right < bRect.left ||
-    aRect.left > bRect.right
-  );
-}
-
-function playGame(){
-  if(!gameRunning) return;
-
-  let car = document.querySelector(".car");
-  let road = gameArea.getBoundingClientRect();
-
-  moveLines();
-  moveEnemies(car);
-
-  if(keys.ArrowLeft && player.x > 0){
-    player.x -= player.speed + 2;
-  }
-  if(keys.ArrowRight && player.x < (road.width - 50)){
-    player.x += player.speed + 2;
-  }
-
-  car.style.left = player.x + "px";
-
-  player.score++;
-  scoreDisplay.innerText = "Score: " + player.score;
-
-  player.speed = 5 + Math.floor(player.score / 500);
-
-  window.requestAnimationFrame(playGame);
-}
-
-function endGame(){
-  gameRunning = false;
-  gameOver.style.display = "block";
+function playGame(gameName){
+  alert("Starting " + gameName + "...");
 }
 </script>
 
